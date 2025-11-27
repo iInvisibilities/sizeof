@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# sizeof - A Unix executable that determines the size of file(s) and prints them out
+# Usage: sizeof file_name, file_name1, file_name2, ...
+
+# Check if any arguments were provided
+if [ $# -eq 0 ]; then
+    echo "Usage: sizeof file_name [file_name1 file_name2 ...]"
+    exit 1
+fi
+
+# Process each argument
+for arg in "$@"; do
+    # Remove trailing comma if present
+    file="${arg%,}"
+    
+    # Check if file exists
+    if [ ! -e "$file" ]; then
+        echo "sizeof: $file: No such file or directory"
+        continue
+    fi
+    
+    # Get file size and print it
+    if [ -f "$file" ]; then
+        size=$(stat -c %s "$file" 2>/dev/null || stat -f %z "$file" 2>/dev/null)
+        echo "$file: $size bytes"
+    elif [ -d "$file" ]; then
+        echo "sizeof: $file: Is a directory"
+    else
+        echo "sizeof: $file: Not a regular file"
+    fi
+done
